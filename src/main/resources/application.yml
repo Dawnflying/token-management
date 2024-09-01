@@ -1,0 +1,83 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  sharding:
+    jdbc:
+      config:
+        sharding:
+          key-generator:
+            type: SNOWFLAKE
+            column: id
+            properties:
+              worker-id: 1
+              datacenter-id: 1
+  shardingsphere:
+    datasource:
+      names: ds0, ds1
+      ds0:
+        type: com.zaxxer.hikari.HikariDataSource
+        jdbcUrl: jdbc:mysql://172.22.114.184:3306/db0
+        username: root
+        password: jarvis@123
+        driver-class-name: com.mysql.cj.jdbc.Driver
+      ds1:
+        type: com.zaxxer.hikari.HikariDataSource
+        jdbcUrl: jdbc:mysql://172.22.114.184:3306/db1
+        username: root
+        password: jarvis@123
+        driver-class-name: com.mysql.cj.jdbc.Driver
+    sharding:
+      tables:
+        user:  # 表的名称
+          actualDataNodes: ds0.user_0, ds1.user_1  # 物理数据表
+          databaseStrategy:
+            inline:
+              shardingColumn: id
+              algorithmExpression: ds${id % 2}
+          tableStrategy:
+            inline:
+              shardingColumn: id  # 分片列
+              algorithmExpression: user_${id % 2}  # 分片算法
+          keyGenerator:
+            column: id
+            type: SNOWFLAKE
+            props:
+                worker-id: 123
+          logic-table: user
+        user_session: # 表的名称
+          actualDataNodes: ds0.user_session_0, ds1.user_session_1  # 物理数据表
+          databaseStrategy:
+            inline:
+              shardingColumn: id
+              algorithmExpression: ds${id % 2}
+          tableStrategy:
+            inline:
+              shardingColumn: id  # 分片列
+              algorithmExpression: user_session_${id % 2}  # 分片算法
+          logic-table: user_session
+          keyGenerator:
+            column: id
+            type: SNOWFLAKE
+            props:
+              worker-id: 12345
+      default-key-generator:
+        type: SNOWFLAKE
+        column: id
+        props:
+          worker-id: 123
+          max-vibration-offset: 1023
+          epoch-milliseconds: 2021-01-01T00:00:00Z
+
+  data:
+    mongodb:
+      uri=mongodb://localhost:27017/http_sessions
+
+  session:
+    timeout: 200m
+logging:
+  level:
+    org.springframework.security: DEBUG
+

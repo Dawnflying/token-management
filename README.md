@@ -28,6 +28,11 @@
 5. 分片策略和实施细节。
 6. 性能测试结果，展示高TPS和低延迟。
 
+# 环境说明
+JVM：jdk17
+NOSQL：mongodb:latest
+SQL：MySQL:8.0
+
 # 技术方案
 ## 迁移方案
    灰度迁移：通过阶段性迁移实现无缝过渡，包括并行处理现有和新令牌。
@@ -48,9 +53,10 @@
    2）批量完成数据一致性校验。分批拉去NoSQL中的Sesion数据和已经写入的MySQL数据，完成一致性校验。
    3）完成热点数据预热。统计热点用户数据，迁移完成后，切流前进行缓存预热。
 
-3. 分片策略
-   1）迁移后的session数据，根据主键id进行sharding，如当存在两个分片的时候可以使用id%2进行路由。
-   2）
+3. session迁移表分片策略
+   为提高系统扩展能力，使用一致性hash算法。对user_session表的分库和分表进行分片策略配置。
+   1）一致性Hash算法实现数据分片节点扩容的时候，相同数据行路由到相同表，避免扩容需要数据迁移。
+   2）迁移后的session数据，根据主键id进行sharding，同时采用自定义的一致性分表算法提高扩展性。
    
 5. 监控和回滚机制
    监控迁移过程中的系统性能、用户反馈和异常情况。
@@ -70,6 +76,7 @@
    exp（过期时间）：令牌的有效期。
    iat（签发时间）：令牌的生成时间。
    自定义声明（如角色、权限等）。
+   
 ```json
 {
    "sub": "user123",
@@ -141,8 +148,9 @@ public class UserSession {
 ## jwt令牌
 <img width="705" alt="image" src="https://github.com/user-attachments/assets/a928988d-a786-4cfb-93e7-5814d06e5f1b">
 
-## 数据迁移
+## 并行运行期间流程
+<img width="778" alt="image" src="https://github.com/user-attachments/assets/251ec6da-5adc-4b61-855d-ad26e89e873f">
 
-## 
+
 
 

@@ -149,10 +149,8 @@ public class UserSession {
 <img width="705" alt="image" src="https://github.com/user-attachments/assets/a928988d-a786-4cfb-93e7-5814d06e5f1b">
 
 ## 并行运行期间流程
+<img width="778" alt="image" src="https://github.com/user-attachments/assets/251ec6da-5adc-4b61-855d-ad26e89e873f">
 
 
-## 数据迁移
-
-## 
 
 

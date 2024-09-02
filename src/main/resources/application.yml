@@ -31,7 +31,7 @@ spring:
         driver-class-name: com.mysql.cj.jdbc.Driver
     sharding:
       tables:
-        user:  # 表的名称
+        user: # 表的名称
           actualDataNodes: ds0.user_0, ds1.user_1  # 物理数据表
           databaseStrategy:
             inline:
@@ -45,18 +45,18 @@ spring:
             column: id
             type: SNOWFLAKE
             props:
-                worker-id: 123
+              worker-id: 123
           logic-table: user
         user_session: # 表的名称
-          actualDataNodes: ds0.user_session_0, ds1.user_session_1  # 物理数据表
+          actualDataNodes: ds0.user_session_0,ds0.user_session_1,ds1.user_session_0, ds1.user_session_1  # 物理数据表
           databaseStrategy:
-            inline:
-              shardingColumn: id
-              algorithmExpression: ds${id % 2}
-          tableStrategy:
-            inline:
+            standard:
               shardingColumn: id  # 分片列
-              algorithmExpression: user_session_${id % 2}  # 分片算法
+              precise-algorithm-class-name: com.example.demo.utils.ConsistentHashDatabaseShardingAlgorithm
+          tableStrategy:
+            standard:
+              shardingColumn: id  # 分片列
+              precise-algorithm-class-name: com.example.demo.utils.ConsistentHashTableShardingAlgorithm
           logic-table: user_session
           keyGenerator:
             column: id

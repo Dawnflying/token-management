@@ -3,8 +3,10 @@ package com.example.demo.controller;
 import com.example.demo.component.JwtManager;
 import com.example.demo.domain.DemoResponse;
 import com.example.demo.domain.LoginRequest;
+import com.example.demo.entity.User;
 import com.example.demo.service.DataLoaderService;
 import com.example.demo.service.DataMigrationService;
+import com.example.demo.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -30,6 +32,8 @@ public class LoginController {
     @Resource
     private DataMigrationService dataMigrationService;
 
+    @Resource
+    private UserService userService;
     /**
      * 用户登录
      *
@@ -42,8 +46,10 @@ public class LoginController {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
+        User user = userService.get(loginRequest.getUsername());
         session.setAttribute("username", loginRequest.getUsername());
         session.setAttribute("authorities", authentication.getAuthorities());
+        session.setAttribute("userId", user.getId());
         return new DemoResponse<String>().success(session.getId());
     }
 
@@ -59,9 +65,9 @@ public class LoginController {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        String token = jwtManager.generateToken(loginRequest.getUsername(), authentication.getAuthorities().toString());
+        User user = userService.get(loginRequest.getUsername());
+        String token = jwtManager.generateToken(loginRequest.getUsername(), user.getId(), authentication.getAuthorities().toString());
         return new DemoResponse<String>().success(token);
-
     }
 
     /**

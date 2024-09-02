@@ -2,9 +2,13 @@ package com.example.demo.filter;
 
 import com.alibaba.fastjson.JSONObject;
 import com.example.demo.component.JwtManager;
+import com.example.demo.service.DefaultUserDetailsService;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -20,8 +24,11 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
 
     private final JwtManager jwtManager;
 
-    public JwtAuthorizationFilter(JwtManager jwtManager) {
+    private final UserDetailsService userDetailsService;
+
+    public JwtAuthorizationFilter(JwtManager jwtManager, UserDetailsService userDetailsService) {
         this.jwtManager = jwtManager;
+        this.userDetailsService = userDetailsService;
     }
 
 
@@ -37,19 +44,28 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter {
                 String token = authorization.substring(7);
                 String username = jwtManager.extractUsername(token);
                 String authorities = jwtManager.extractClaims(token).get("authorities", String.class);
-                log.info("username: " + username + ", authorities: " + authorities);
+                Long userId = jwtManager.extractClaims(token).get("userId", Long.class);
                 log.info("token解析耗时：" + (System.currentTimeMillis() - start) + "ms");
-                //do authorization
-            }
-            catch (Exception e) {
+                System.out.println("username: " + username + ", authorities: " + authorities + ", userId: " + userId);
+                System.out.println("token解析耗时：" + (System.currentTimeMillis() - start) + "ms");
+                if (username != null) {
+                    //do authorization
+                    UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                    if (userDetails != null) {
+                        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                                userDetails, null, userDetails.getAuthorities());
+                        SecurityContextHolder.getContext().setAuthentication(authentication);
+                    }
+                }
+            } catch (Exception e) {
                 // 如果解析 token 出现异常，返回 401 错误
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.getWriter().write(JSONObject.toJSONString("Unauthorized"));
+                SecurityContextHolder.clearContext();
                 return;
             }
-            // 将 token 中的用户信息存入 SecurityContext
+
         }
-        // 继续执行过滤器链
         filterChain.doFilter(request, response);
     }
 

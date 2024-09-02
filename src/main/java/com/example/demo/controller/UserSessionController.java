@@ -3,6 +3,8 @@ package com.example.demo.controller;
 import com.example.demo.entity.UserSession;
 import com.example.demo.service.UserSessionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -33,5 +35,11 @@ public class UserSessionController {
     @GetMapping("/getAll")
     public Iterable<UserSession> getAll() {
         return userSessionService.findAll();
+    }
+
+    @GetMapping("/findByQueryParam")
+    public Iterable<UserSession> findByQueryParam(@RequestParam("page") int page, @RequestParam("size") int size) {
+        PageRequest request = PageRequest.of(page, size);
+        return userSessionService.findByQueryParam(request);
     }
 }

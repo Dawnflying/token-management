@@ -13,10 +13,11 @@ public class JwtManager {
 
     private String secretKey = "mySecretKey"; // 秘密密钥，生产环境中应保密并配置在安全的地方
 
-    public String generateToken(String username, String authorities) {
+    public String generateToken(String username, long userId, String authorities) {
         return Jwts.builder()
                 .setSubject(username)
                 .claim("authorities", authorities)
+                .claim("userId", userId)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 5)) // 10小时有效期
                 .signWith(SignatureAlgorithm.HS256, secretKey)

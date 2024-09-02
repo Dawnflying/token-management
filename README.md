@@ -1,4 +1,5 @@
-### 要求：
+# 技术需求
+### 需求说明：
 1. **Stateful Token to Stateless Token Migration:**
    - 设计一个机制，将现有的有状态令牌迁移到无状态访问令牌。
    - 确保系统在迁移过程中无缝处理，不影响用户体验。
@@ -33,3 +34,29 @@
 3. 数据完整性：迁移和转移机制应保持一致性和完整性。
 4. 性能：系统应表现出低延迟和高吞吐量。
 5. 文档：候选人应提供清晰、简洁的文档，解释解决方案。
+
+
+
+# 技术架构
+
+
+# 领域模型
+
+
+# 核心流程
+
+## session令牌
+<img width="682" alt="image" src="https://github.com/user-attachments/assets/464ab647-846a-4455-916e-7a21277a631b">
+
+## jwt令牌
+<img width="705" alt="image" src="https://github.com/user-attachments/assets/a928988d-a786-4cfb-93e7-5814d06e5f1b">
+
+## 数据迁移
+
+## 
+
+
+# 接口说明
+
+# 
+

@@ -21,7 +21,7 @@ public class UserController {
 
     @GetMapping("/get")
     public String get(String username) {
-        return userService.get(username).toString();
+        return userService.getUserByUsername(username).toString();
     }
 
     @DeleteMapping("/delete")
@@ -31,7 +31,7 @@ public class UserController {
 
     @PutMapping("/update")
     public void update(String username, String password) {
-        User user = userService.get(username);
+        User user = userService.getUserByUsername(username);
         user.setUsername(username);
         user.setPassword(password);
         userService.updateUserById(user.getId(), user);

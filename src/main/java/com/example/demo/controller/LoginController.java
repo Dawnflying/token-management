@@ -46,7 +46,7 @@ public class LoginController {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        User user = userService.get(loginRequest.getUsername());
+        User user = userService.getUserByUsername(loginRequest.getUsername());
         session.setAttribute("username", loginRequest.getUsername());
         session.setAttribute("authorities", authentication.getAuthorities());
         session.setAttribute("userId", user.getId());
@@ -65,7 +65,7 @@ public class LoginController {
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        User user = userService.get(loginRequest.getUsername());
+        User user = userService.getUserByUsername(loginRequest.getUsername());
         String token = jwtManager.generateToken(loginRequest.getUsername(), user.getId(), authentication.getAuthorities().toString());
         return new DemoResponse<String>().success(token);
     }

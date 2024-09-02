@@ -19,13 +19,13 @@ spring:
       names: ds0, ds1
       ds0:
         type: com.zaxxer.hikari.HikariDataSource
-        jdbcUrl: jdbc:mysql://172.22.114.184:3306/db0
+        jdbcUrl: jdbc:mysql://localhost:3306/db0
         username: root
         password: jarvis@123
         driver-class-name: com.mysql.cj.jdbc.Driver
       ds1:
         type: com.zaxxer.hikari.HikariDataSource
-        jdbcUrl: jdbc:mysql://172.22.114.184:3306/db1
+        jdbcUrl: jdbc:mysql://localhost:3306/db1
         username: root
         password: jarvis@123
         driver-class-name: com.mysql.cj.jdbc.Driver

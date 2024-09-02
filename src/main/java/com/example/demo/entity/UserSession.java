@@ -11,7 +11,9 @@ import java.util.Date;
         indexes = {
                 @Index(name = "idx_username", columnList = "username"),
                 @Index(name = "idx_session_id", columnList = "session_id")
-        })
+        }, uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"session_id"})
+})
 public class UserSession {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

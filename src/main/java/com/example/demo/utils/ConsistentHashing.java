@@ -3,6 +3,8 @@ package com.example.demo.utils;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+//describe a consistent hashing algorithm
+//https://en.wikipedia.org/wiki/Consistent_hashing
 public class ConsistentHashing {
     private final SortedMap<Integer, String> circle = new TreeMap<>();
     private final int numberOfReplicas;

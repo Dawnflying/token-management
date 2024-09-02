@@ -5,7 +5,6 @@ import com.example.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.cache.annotation.Caching;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -50,9 +49,10 @@ public class UserService {
             existingUser.setEnabled(user.isEnabled());
             userRepository.save(existingUser);
         }
+        cacheService.evictMultipleKeys("users", String.valueOf(existingUser.getUsername()));
     }
 
-    @Cacheable(value = "user-", key = "#username")
+    @Cacheable(value = "users", key = "#username")
     public User getUserByUsername(String username) {
         return userRepository.findByUsername(username);
     }
@@ -61,7 +61,4 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User get(String username) {
-        return userRepository.findByUsername(username);
-    }
 }

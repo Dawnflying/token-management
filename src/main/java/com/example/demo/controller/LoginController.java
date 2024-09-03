@@ -98,7 +98,7 @@ public class LoginController {
 
     @PostMapping("/validate")
     public DemoResponse<String> validate() {
-        dataMigrationService.validateDate(20);
+        dataMigrationService.validateData(20);
         return new DemoResponse<String>().success("validate success");
     }
 

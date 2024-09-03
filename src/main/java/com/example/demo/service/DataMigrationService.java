@@ -50,7 +50,7 @@ public class DataMigrationService {
     }
 
     @CacheEvict(value = "users", allEntries = true)
-    public void validateDate(Integer pageSize) {
+    public void validateData(Integer pageSize) {
         int currentPage = 0;
         Page<UserSession> page;
 
@@ -58,8 +58,10 @@ public class DataMigrationService {
             page = getSessions(currentPage, pageSize);
             try {
                 List<UserSession> userSessions = page.getContent();
-                List<UserSession> list = userSessionRepository.saveAll(userSessions);
-                log.info("Saved " + list.size() + " sessions");
+                List<String> sessionIds = userSessions.stream().map(UserSession::getSessionId).collect(Collectors.toList());
+                List<UserSession> sessions = userSessionRepository.findBySessionIdIn(sessionIds);
+                //do session validates.
+                log.info("Saved " + sessions.size() + " sessions");
             } catch (Exception e) {
                 log.error("Failed to get sessions from page " + currentPage, e);
                 e.printStackTrace();
@@ -68,7 +70,7 @@ public class DataMigrationService {
         } while (page.hasNext());
     }
 
-    public void warmUp(){
+    public void warmUp() {
 
     }
 
@@ -99,7 +101,7 @@ public class DataMigrationService {
                     data.put((String) entry.getKey(), entry.getValue());
                 }
             }
-            SimpleGrantedAuthority authority = (SimpleGrantedAuthority)((Collection)attributes.get("authorities")).iterator().next();
+            SimpleGrantedAuthority authority = (SimpleGrantedAuthority) ((Collection) attributes.get("authorities")).iterator().next();
             session.setRole(authority.getAuthority());
             return session;
         }).collect(Collectors.toList());
@@ -108,13 +110,8 @@ public class DataMigrationService {
 
 
     public long getSessionExpiryTime(HttpSession session) {
-        // 获取会话的创建时间
         long creationTime = session.getCreationTime();
-
-        // 获取会话的超时时间（单位：分钟）
         int maxInactiveInterval = session.getMaxInactiveInterval() / 60;
-
-        // 计算过期时间
         long currentTime = System.currentTimeMillis();
         long expirationTime = creationTime + (maxInactiveInterval * 60 * 1000);
 

@@ -1,7 +1,7 @@
 spring:
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     show-sql: true
 
   sharding:
@@ -19,13 +19,13 @@ spring:
       names: ds0, ds1
       ds0:
         type: com.zaxxer.hikari.HikariDataSource
-        jdbcUrl: jdbc:mysql://localhost:3306/db0
+        jdbcUrl: jdbc:mysql://172.22.119.175:3306/db0
         username: root
         password: jarvis@123
         driver-class-name: com.mysql.cj.jdbc.Driver
       ds1:
         type: com.zaxxer.hikari.HikariDataSource
-        jdbcUrl: jdbc:mysql://localhost:3306/db1
+        jdbcUrl: jdbc:mysql://172.22.119.175:3306/db1
         username: root
         password: jarvis@123
         driver-class-name: com.mysql.cj.jdbc.Driver
